@@ -17,6 +17,7 @@ const helper = require('../dbhelper/projectDbhelper')
 const channel = require('../utils/channel')
 const tools = require('../utils/tools')
 const config = require('../config')
+const dayjs = require("dayjs");
 const router = new Router()
 
 router.prefix('/project')
@@ -104,7 +105,7 @@ router.post('/getModelList', async (ctx, next) => {
       i.config = (i.config && typeof i.config === 'string') ? JSON.parse(i.config) : '',
       i.pages = (i.pages && typeof i.pages === 'string') ? JSON.parse(i.pages) : ''
     })
-  
+
     ctx.body = {
       list: data,
       totalCount,
@@ -119,7 +120,7 @@ router.post('/getModelList', async (ctx, next) => {
       status: '10001'
     }
   }
-  
+
   await next()
 })
 
@@ -135,20 +136,27 @@ router.post('/getWXQr', async (ctx, next) => {
     method: 'GET'
   })
 
+  console.log('https://api.weixin.qq.com/cgi-bin/token:::',res)
+
   let token = res.data.access_token
 
   let buffer = await getQr(token, id)
-
-  let fileName = `/img/${Date.now()}${tools.getRandomCode(6)}.jpg`
+  console.log('QR Code data (base64 for display purposes):', buffer.toString('base64'));
+  console.log('https://api.weixin.qq.com/wxa/getwxacodeunlimit:::'+JSON.stringify(buffer))
+  let fileName = `/img/222.png`
 
   fs.writeFile(fileName, buffer, err => {
-    if (!err) {
+    if (err) {
+      console.error('写入文件时出错:', err);
+    }else {
+
       console.log('图片生成成功!')
     }
   })
 
   ctx.body = {
     data: `${config.serviceApi}${fileName}`,
+    // data: `${config.serviceApi}/img/${dayjs(Date.now()).format('YYYYMMDD')}/${fileName}`,
     messsage: '生成成功',
     status: '10000'
   }
@@ -157,17 +165,20 @@ router.post('/getWXQr', async (ctx, next) => {
 
 // 生成小程序二维码
 async function getQr (token, id) {
-  console.log('comme')
-  let { data } = await axios({
-    url: `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token}`,
-    method: 'POST',
-    responseType: 'arraybuffer',
-    data: {
-      page: 'pages/index/tabbar/home',
-      scene: `id=${id}`
-    }
-  })
-  return data
+  console.log('comme',token)
+
+
+   let  res = await axios({
+      url: `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token}`,
+      method: 'POST',
+      responseType: 'arraybuffer',
+      data: {
+        page: 'pages/list/list',
+        scene: `id=${id}`
+      }
+    })
+
+  return res&&res.data
 }
 
 module.exports = router
