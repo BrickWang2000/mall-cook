@@ -94,7 +94,17 @@ Vue.prototype.$jump = jump
 Vue.prototype.$getWrapStyle = getWrapStyle
 Vue.prototype.$getComponentStyle = getComponentStyle
 Vue.prototype.$getMultiBackground = getMultiBackground
+import Vant from 'vant';
+import moment from 'moment';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import 'vant/lib/index.css';
 
+Vue.use(Vant);
+Vue.use(ElementUI);
+
+// 使用 moment.js
+Vue.prototype.$moment = moment;
 new Vue({
   router,
   store,

@@ -27,12 +27,12 @@ module.exports = {
   transpileDependencies: ['faim', 'mime', 'vue-global-config'],
   configureWebpack: config => {
     // CDN 加载依赖
-    config.externals = {
-      'element-ui': 'ELEMENT',
-      vue: 'Vue',
-      vant: 'Vant',
-      moment: 'moment'
-    }
+    // config.externals = {
+    //   'element-ui': 'ELEMENT',
+    //   vue: 'Vue',
+    //   vant: 'Vant',
+    //   moment: 'moment'
+    // }
 
     // gzip 压缩
     console.log('GZIP');
